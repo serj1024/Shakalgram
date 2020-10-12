@@ -63,8 +63,14 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewH
 
                 private void SetLike() {
                     Log.d("LIKE", _currentUrl);
-                    _likeController.Insert(_currentUrl);
-                    Picasso.get().load(R.drawable.filled_heart).into(_likeImageView);
+                    if (_likeController.FindLikeToURL(_currentUrl)){
+                        _likeController.Delete(_currentUrl);
+                        Picasso.get().load(R.drawable.unfilled_heart).into(_likeImageView);
+                    }
+                    else {
+                        _likeController.Insert(_currentUrl);
+                        Picasso.get().load(R.drawable.filled_heart).into(_likeImageView);
+                    }
                 }
             });
         }

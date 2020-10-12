@@ -17,6 +17,10 @@ public class LikeController {
         _dataBase.execSQL("INSERT INTO "+_tableName+" VALUES ('"+ url +"');");
     }
 
+    public void Delete(String url){
+        _dataBase.execSQL("DELETE FROM "+ _tableName +" WHERE url = '"+ url +"';");
+    }
+
     public boolean FindLikeToURL(String url){
         boolean isFinded = false;
         Cursor query = _dataBase.rawQuery("SELECT url FROM "+_tableName+" WHERE url = '"+url+"';", null);
