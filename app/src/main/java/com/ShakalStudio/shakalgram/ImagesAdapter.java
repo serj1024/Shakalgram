@@ -49,6 +49,17 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewH
             super(itemView);
             mainImageView = itemView.findViewById(R.id.mainImageView);
             likeImageView = itemView.findViewById(R.id.likeImageView);
+
+            likeImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SetLike();
+                }
+
+                private void SetLike() {
+                    Picasso.get().load(R.drawable.filled_heart).into(likeImageView);
+                }
+            });
         }
 
         void bind(String url)
