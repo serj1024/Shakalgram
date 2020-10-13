@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 public class MainActivity extends AppCompatActivity{
     private RecyclerView imagesList;
 
@@ -19,13 +21,7 @@ public class MainActivity extends AppCompatActivity{
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         imagesList.setLayoutManager(layoutManager);
-        imagesList.setAdapter(new ImagesAdapter(new PickUpImageParser()));
-
-
-
-
-//
-//        likeController.Insert("httpt.com");
-//        Log.d("AAA", String.valueOf(likeController.FindURL("httpt.com")));
+        //imagesList.setAdapter(new ImagesAdapter(new PickUpImageParser()));
+        imagesList.setAdapter(new ImagesAdapter(new FlikrParser()));
     }
 }
