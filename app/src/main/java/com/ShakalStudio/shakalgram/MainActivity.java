@@ -1,27 +1,29 @@
 package com.ShakalStudio.shakalgram;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 public class MainActivity extends AppCompatActivity{
-    private RecyclerView imagesList;
+    private RecyclerView _imagesRecyclerView;
+    ImageParser _imageParser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imagesList = findViewById(R.id.recyclerView);
+        _imagesRecyclerView = findViewById(R.id.recyclerView);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        imagesList.setLayoutManager(layoutManager);
-        //imagesList.setAdapter(new ImagesAdapter(new PickUpImageParser()));
-        imagesList.setAdapter(new ImagesAdapter(new FlikrParser()));
+        _imagesRecyclerView.setLayoutManager(layoutManager);
+//        _imageParser = new PickUpImageParser();
+        _imageParser = new FlikrParser();
+        _imagesRecyclerView.setAdapter(new ImagesAdapter(_imageParser));
+        new ImageLoadController(_imagesRecyclerView, _imageParser).StartLoad();
     }
 }

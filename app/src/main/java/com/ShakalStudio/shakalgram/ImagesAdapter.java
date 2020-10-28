@@ -33,13 +33,12 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewH
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
-        _imageParser.CheckToLoadNextPageImages(position);
         holder.bind(_imageParser.GetImagesURL().get(position));
     }
 
     @Override
     public int getItemCount() {
-        return _imageParser.GetImagesURL().size()+1;
+        return _imageParser.GetImagesURL().size();
     }
 
     class ImageViewHolder extends RecyclerView.ViewHolder{
