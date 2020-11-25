@@ -6,9 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class MainActivity extends AppCompatActivity implements MainActView{
     private RecyclerView _imagesRecyclerView;
+    private SwipeRefreshLayout _swipeRefreshLayout;
     private MainPresenter _mainPresenter;
 
     @Override
@@ -17,8 +19,9 @@ public class MainActivity extends AppCompatActivity implements MainActView{
         setContentView(R.layout.activity_main);
 
         _mainPresenter = new MainPresenter(this, new FlikrParser());
-
+        _swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         _imagesRecyclerView = findViewById(R.id.recyclerView);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         _imagesRecyclerView.setLayoutManager(layoutManager);
         _imagesRecyclerView.setAdapter(new ImagesAdapter(_mainPresenter.GetImagesURL()));
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements MainActView{
                 int lastImagePosition = _mainPresenter.GetImagesURL().size()-1;
                 if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == lastImagePosition) {
                     _mainPresenter.DownloadImages();
+                    _swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
@@ -46,5 +50,6 @@ public class MainActivity extends AppCompatActivity implements MainActView{
     @Override
     public void updateData() {
         _imagesRecyclerView.getAdapter().notifyDataSetChanged();
+        _swipeRefreshLayout.setRefreshing(false);
     }
 }

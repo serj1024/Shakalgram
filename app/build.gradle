@@ -44,4 +44,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.flickr4java:flickr4java:3.0.4'
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 }
