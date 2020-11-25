@@ -1,6 +1,5 @@
 package com.ShakalStudio.shakalgram;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,22 +7,44 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements MainActView{
     private RecyclerView _imagesRecyclerView;
-    ImageParser _imageParser;
+    private MainPresenter _mainPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        _imagesRecyclerView = findViewById(R.id.recyclerView);
+        _mainPresenter = new MainPresenter(this, new FlikrParser());
 
+        _imagesRecyclerView = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         _imagesRecyclerView.setLayoutManager(layoutManager);
-//        _imageParser = new PickUpImageParser();
-        _imageParser = new FlikrParser();
-        _imagesRecyclerView.setAdapter(new ImagesAdapter(_imageParser));
-        new ImageLoadController(_imagesRecyclerView, _imageParser).StartLoad();
+        _imagesRecyclerView.setAdapter(new ImagesAdapter(_mainPresenter.GetImagesURL()));
+
+        _imagesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) _imagesRecyclerView.getLayoutManager();
+                int lastImagePosition = _mainPresenter.GetImagesURL().size()-1;
+                if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == lastImagePosition) {
+                    _mainPresenter.DownloadImages();
+                }
+            }
+        });
+
+        _mainPresenter.DownloadImages();
+    }
+
+    @Override
+    public void updateData() {
+        _imagesRecyclerView.getAdapter().notifyDataSetChanged();
     }
 }

@@ -12,11 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewHolder> {
-    private ImageParser _imageParser;
-    public  ImagesAdapter(ImageParser imageParser)
-    {
-        _imageParser = imageParser;
+    private ArrayList<String> _imagesURL;
+
+    public ImagesAdapter(ArrayList<String> imagesURL) {
+        _imagesURL = imagesURL;
     }
 
     @NonNull
@@ -28,59 +30,49 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ImageViewH
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View view = inflater.inflate(layoutIdForImagesList, parent, false);
-        return  new ImageViewHolder(view, new LikeController(context));
+        return  new ImageViewHolder(view, new LikeHandler(context));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
-        holder.bind(_imageParser.GetImagesURL().get(position));
+        holder.bind(_imagesURL.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return _imageParser.GetImagesURL().size();
+        return _imagesURL.size();
     }
 
     class ImageViewHolder extends RecyclerView.ViewHolder{
         private ImageView _mainImageView;
         private ImageView _likeImageView;
-        private LikeController _likeController;
-        private int _currentIndex;
+        private LikeHandler _likeHandler;
         private String _currentUrl;
 
-        public ImageViewHolder(View itemView, LikeController likeController) {
+        public ImageViewHolder(View itemView, LikeHandler likeHandler) {
             super(itemView);
-            _likeController = likeController;
+            _likeHandler = likeHandler;
             _mainImageView = itemView.findViewById(R.id.mainImageView);
             _likeImageView = itemView.findViewById(R.id.likeImageView);
 
             _likeImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SetLike();
-                }
-
-                private void SetLike() {
-                    Log.d("LIKE", _currentUrl);
-                    if (_likeController.FindLikeToURL(_currentUrl)){
-                        _likeController.Delete(_currentUrl);
-                        Picasso.get().load(R.drawable.unfilled_heart).into(_likeImageView);
-                    }
-                    else {
-                        _likeController.Insert(_currentUrl);
+                    boolean successLike = _likeHandler.TrySetLike(_currentUrl);
+                    if(successLike)
                         Picasso.get().load(R.drawable.filled_heart).into(_likeImageView);
-                    }
+                    else
+                        Picasso.get().load(R.drawable.unfilled_heart).into(_likeImageView);
                 }
             });
         }
 
         void bind(String url)
         {
-            _currentIndex = getAdapterPosition();
-            _currentUrl = _imageParser.GetImagesURL().get(_currentIndex);
+            _currentUrl = _imagesURL.get(getAdapterPosition());
             Picasso.get().load(url).into(_mainImageView);
 
-            if (_likeController.FindLikeToURL(_currentUrl))
+            if (_likeHandler.FindLikeToURL(_currentUrl))
                 Picasso.get().load(R.drawable.filled_heart).into(_likeImageView);
             else
                 Picasso.get().load(R.drawable.unfilled_heart).into(_likeImageView);
