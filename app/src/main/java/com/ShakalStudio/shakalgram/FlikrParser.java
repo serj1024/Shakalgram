@@ -22,7 +22,7 @@ public class FlikrParser implements ImageParser {
     private String _apiKey = "6a57d554703bfffb264f029d63ab81c1";
     private String _sharedSecret = "b35d3ec4118c4eea";
     private String _searchTile = "car";
-    private Integer _itemInPage = 50;
+    private Integer _itemInPage = 15;
     private Integer _page = 1;
     private ArrayList<String> _imagesURL = new ArrayList();
     Flickr flickr;

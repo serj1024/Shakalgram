@@ -2,45 +2,56 @@ package com.ShakalStudio.shakalgram;
 
 import android.os.AsyncTask;
 
-import java.util.ArrayList;
-
 public class MainPresenter
 {
     private MainActView _mainActView;
     private ImageParser _imageParser;
+    private LikeHandler _likeHandler;
 
-    public MainPresenter(MainActView mainActView, ImageParser imageParser) {
+    public MainPresenter(MainActView mainActView, ImageParser imageParser, LikeHandler likeHandler) {
         _mainActView = mainActView;
         _imageParser = imageParser;
+        _likeHandler = likeHandler;
     }
 
     public void DownloadImages() {
-        new DownloadImages(_imageParser, _mainActView).execute();
+        new DownloadImagesAsync(_imageParser, _mainActView).execute();
     }
 
-    public ArrayList<String> GetImagesURL(){
-        return _imageParser.GetImagesURL();
+    public void onBindImageViewAtPosition(int position, ImageHolderView imageHolderView) {
+        String imageURL = _imageParser.GetImagesURL().get(position);
+        imageHolderView.setMainImage(imageURL);
+        imageHolderView.setLike(_likeHandler.FindLikeToURL(imageURL));
     }
 
-    public static class DownloadImages extends AsyncTask<Void, Void, Void> {
-        private ImageParser _imageParser;
-        private MainActView _mainActView;
+    public boolean TrySetLike(int imageIndex){
+        String imageURL = _imageParser.GetImagesURL().get(imageIndex);
+        return _likeHandler.TrySetLike(imageURL);
+    }
 
-        public DownloadImages(ImageParser imageParser, MainActView mainActView) {
-            _imageParser = imageParser;
-            _mainActView = mainActView;
-        }
+    public int getImagesCount(){
+        return _imageParser.GetImagesURL().size();
+    }
+}
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            _imageParser.DownloadNewPageImages();
-            return null;
-        }
+class DownloadImagesAsync extends AsyncTask<Void, Void, Void> {
+    private ImageParser _imageParser;
+    private MainActView _mainActView;
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            _mainActView.updateData();
-        }
+    public DownloadImagesAsync(ImageParser imageParser, MainActView mainActView) {
+        _imageParser = imageParser;
+        _mainActView = mainActView;
+    }
+
+    @Override
+    protected Void doInBackground(Void... voids) {
+        _imageParser.DownloadNewPageImages();
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        _mainActView.updateData();
     }
 }
