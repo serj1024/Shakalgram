@@ -40,4 +40,3 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImageViewHolder>{
         return _mainPresenter.getImagesCount();
     }
 }
-

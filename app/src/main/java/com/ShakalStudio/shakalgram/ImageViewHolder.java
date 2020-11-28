@@ -19,11 +19,7 @@ public class ImageViewHolder extends RecyclerView.ViewHolder implements ImageHol
         _likeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean successLike = mainPresenter.TrySetLike(getAdapterPosition());
-                if (successLike)
-                    setLike(true);
-                else
-                    setLike(false);
+                setLike(mainPresenter.TrySetLike(getAdapterPosition()));
             }
         });
     }
