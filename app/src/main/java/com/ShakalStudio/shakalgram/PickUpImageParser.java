@@ -24,19 +24,13 @@ public class PickUpImageParser implements ImageParser {
         _urlCurrentPage = _url.concat(String.valueOf(_currentPage));
     }
 
-    private String GetUrlNextPage()
-    {
-        _currentPage++;
-        return  _url.concat(String.valueOf(_currentPage));
-    }
-
     @Override
-    public ArrayList<String> GetImagesURL() {
+    public ArrayList<String> getImagesURL() {
         return _imagesURL;
     }
 
     @Override
-    public void DownloadNewPageImages() {
+    public void downloadNewPageImages() {
         Document doc = null;
         try {
             doc = Jsoup.connect(_urlCurrentPage).get();

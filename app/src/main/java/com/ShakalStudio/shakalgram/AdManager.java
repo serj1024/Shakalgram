@@ -10,7 +10,7 @@ public class AdManager {
     public String AdImageURL = "https://i.ytimg.com/vi/8B8DV_k5IR0/maxresdefault.jpg";
     public String DownloadLink = "https://github.com/serj1024/Shakalgram";
 
-    public void ShowAdApp(Context context) {
+    public void showAdDownloadLink(Context context) {
         try {
             new ActivityNotFoundException();
             Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(DownloadLink));
@@ -20,5 +20,8 @@ public class AdManager {
                     + " Please install a webbrowser",  Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+    }
+
+    public void showAdApp(Context context) {
     }
 }

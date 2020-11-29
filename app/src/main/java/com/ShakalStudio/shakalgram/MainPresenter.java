@@ -17,30 +17,32 @@ public class MainPresenter
         _adManager = adManager;
     }
 
-    public void DownloadImages() {
+    public void downloadImages() {
         new DownloadImagesAsync(_imageParser, _mainActView, _adManager).execute();
     }
 
     public void onBindImageViewAtPosition(int position, ImageHolderView imageHolderView) {
-        String imageURL = _imageParser.GetImagesURL().get(position);
+        String imageURL = _imageParser.getImagesURL().get(position);
         imageHolderView.setMainImage(imageURL);
-        imageHolderView.setLike(_likeHandler.FindLikeToURL(imageURL));
+        imageHolderView.setLike(_likeHandler.findLikeToURL(imageURL));
         if(imageURL == _adManager.AdImageURL)
             imageHolderView.disableLike();
     }
 
-    public boolean TrySetLike(int imageIndex){
-        String imageURL = _imageParser.GetImagesURL().get(imageIndex);
-        return _likeHandler.TrySetLike(imageURL);
+    public boolean trySetLike(int imageIndex){
+        String imageURL = _imageParser.getImagesURL().get(imageIndex);
+        return _likeHandler.trySetLike(imageURL);
     }
 
     public int getImagesCount(){
-        return _imageParser.GetImagesURL().size();
+        return _imageParser.getImagesURL().size();
     }
 
     public void onMainImageClicked(int imagePosition, Context context) {
-        if(_imageParser.GetImagesURL().get(imagePosition) == _adManager.AdImageURL)
-            _adManager.ShowAdApp(context);
+        if(_imageParser.getImagesURL().get(imagePosition) == _adManager.AdImageURL){
+            //_adManager.showAdApp(context);
+            _adManager.showAdDownloadLink(context);
+        }
     }
 }
 
@@ -57,14 +59,14 @@ class DownloadImagesAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        _imageParser.DownloadNewPageImages();
+        _imageParser.downloadNewPageImages();
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        _imageParser.GetImagesURL().add(_adManager.AdImageURL);
+        _imageParser.getImagesURL().add(_adManager.AdImageURL);
         _mainActView.updateData();
     }
 }

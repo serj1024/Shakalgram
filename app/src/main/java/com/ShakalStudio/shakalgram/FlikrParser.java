@@ -31,12 +31,12 @@ public class FlikrParser implements ImageParser {
     }
 
     @Override
-    public ArrayList<String> GetImagesURL() {
+    public ArrayList<String> getImagesURL() {
         return _imagesURL;
     }
 
     @Override
-    public void DownloadNewPageImages() {
+    public void downloadNewPageImages() {
         try {
             PhotosInterface photos = flickr.getPhotosInterface();
             SearchParameters params = new SearchParameters();
@@ -46,7 +46,7 @@ public class FlikrParser implements ImageParser {
             params.setExtras(Extras.ALL_EXTRAS);
             PhotoList<Photo> resultsPhoto = photos.search(params, _itemInPage, ++_page);
             for (Photo p: resultsPhoto){
-                _imagesURL.add(p.getSmallUrl());
+                _imagesURL.add(p.getMediumUrl());
             }
         } catch (FlickrException e) {
             e.printStackTrace();

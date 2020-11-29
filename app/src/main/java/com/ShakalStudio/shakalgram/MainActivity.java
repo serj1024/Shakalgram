@@ -38,13 +38,13 @@ public class MainActivity extends AppCompatActivity implements MainActView{
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) _imagesRecyclerView.getLayoutManager();
                 int lastImagePosition = _mainPresenter.getImagesCount()-1;
                 if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == lastImagePosition) {
-                    _mainPresenter.DownloadImages();
+                    _mainPresenter.downloadImages();
                     _swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
 
-        _mainPresenter.DownloadImages();
+        _mainPresenter.downloadImages();
     }
 
     @Override
