@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity implements MainActView{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        _mainPresenter = new MainPresenter(this, new FlikrParser(), new LikeHandler(this.getApplicationContext()));
+        _mainPresenter = new MainPresenter(this, new FlikrParser(), new LikeHandler(this.getApplicationContext()), new AdManager());
         _swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         _imagesRecyclerView = findViewById(R.id.recyclerView);
 

@@ -27,7 +27,6 @@ app:cardCornerRadius="10dp">
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="110dp"
-        android:scaleType="centerCrop"
-        app:srcCompat="@drawable/filled_heart" />
+        android:scaleType="centerCrop" />
 </RelativeLayout>
 </androidx.cardview.widget.CardView>

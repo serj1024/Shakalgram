@@ -11,10 +11,17 @@ public class ImageViewHolder extends RecyclerView.ViewHolder implements ImageHol
     private ImageView _mainImageView;
     private ImageView _likeImageView;
 
-    public ImageViewHolder(View itemView, final MainPresenter mainPresenter) {
+    public ImageViewHolder(final View itemView, final MainPresenter mainPresenter) {
         super(itemView);
         _mainImageView = itemView.findViewById(R.id.mainImageView);
         _likeImageView = itemView.findViewById(R.id.likeImageView);
+
+        _mainImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainPresenter.onMainImageClicked(getAdapterPosition(), itemView.getContext());
+            }
+        });
 
         _likeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -31,9 +38,15 @@ public class ImageViewHolder extends RecyclerView.ViewHolder implements ImageHol
 
     @Override
     public void setLike(boolean filled) {
+        _likeImageView.setVisibility(View.VISIBLE);
         if (filled)
             Picasso.get().load(R.drawable.filled_heart).into(_likeImageView);
         else
             Picasso.get().load(R.drawable.unfilled_heart).into(_likeImageView);
+    }
+
+    @Override
+    public void disableLike() {
+            _likeImageView.setVisibility(View.GONE);
     }
 }
