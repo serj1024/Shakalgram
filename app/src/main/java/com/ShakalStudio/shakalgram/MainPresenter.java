@@ -40,8 +40,8 @@ public class MainPresenter
 
     public void onMainImageClicked(int imagePosition, Context context) {
         if(_imageParser.getImagesURL().get(imagePosition) == _adManager.AdImageURL){
-            //_adManager.showAdApp(context);
-            _adManager.showAdDownloadLink(context);
+            _adManager.showAdApp(context);
+           // _adManager.showAdDownloadLink(context);
         }
     }
 }
