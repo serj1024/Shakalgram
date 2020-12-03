@@ -1,7 +1,10 @@
 package com.ShakalStudio.shakalgram;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 public class MainPresenter
 {
@@ -42,6 +45,17 @@ public class MainPresenter
         if(_imageParser.getImagesURL().get(imagePosition) == _adManager.AdImageURL){
             _adManager.showAdApp(context);
            // _adManager.showAdDownloadLink(context);
+        }
+        else {
+            Intent intent = new Intent(context, FullScreenActivity.class);
+            ServiceLocator.getInstance().setSelectedImagePosition(imagePosition);
+            try{
+                context.startActivity(intent);
+            }
+            catch(Exception e){
+                Toast.makeText(context, "GG WP",  Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
         }
     }
 }

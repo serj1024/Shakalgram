@@ -18,7 +18,11 @@ public class MainActivity extends AppCompatActivity implements MainActView{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        _mainPresenter = new MainPresenter(this, new FlikrParser(), new LikeHandler(this.getApplicationContext()), new AdManager());
+        _mainPresenter = new MainPresenter(this,
+                ServiceLocator.getInstance().getImageParser(),
+                ServiceLocator.getInstance().getLikeHandler(this.getApplicationContext()),
+                new AdManager());
+
         _swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         _imagesRecyclerView = findViewById(R.id.recyclerView);
 
@@ -45,6 +49,12 @@ public class MainActivity extends AppCompatActivity implements MainActView{
         });
 
         _mainPresenter.downloadImages();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateData();
     }
 
     @Override
