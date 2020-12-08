@@ -1,8 +1,7 @@
-package com.ShakalStudio.shakalgram;
+package com.ShakalStudio.shakalgram.MVP;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.widget.Toast;
 

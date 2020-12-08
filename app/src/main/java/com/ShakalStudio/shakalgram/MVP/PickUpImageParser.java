@@ -1,6 +1,5 @@
-package com.ShakalStudio.shakalgram;
+package com.ShakalStudio.shakalgram.MVP;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.jsoup.Jsoup;

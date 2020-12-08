@@ -1,4 +1,4 @@
-package com.ShakalStudio.shakalgram;
+package com.ShakalStudio.shakalgram.MVP;
 
 public interface FullScreenActView {
     void showMainImage(String imageURL);

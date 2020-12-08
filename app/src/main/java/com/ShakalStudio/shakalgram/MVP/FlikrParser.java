@@ -1,7 +1,4 @@
-package com.ShakalStudio.shakalgram;
-
-import android.os.AsyncTask;
-import android.util.Log;
+package com.ShakalStudio.shakalgram.MVP;
 
 import com.flickr4java.flickr.Flickr;
 import com.flickr4java.flickr.FlickrException;
@@ -13,7 +10,6 @@ import com.flickr4java.flickr.photos.PhotosInterface;
 import com.flickr4java.flickr.photos.SearchParameters;
 
 import java.util.ArrayList;
-import javax.xml.parsers.ParserConfigurationException;
 
 import static com.flickr4java.flickr.photos.SearchParameters.RELEVANCE;
 import static java.lang.Thread.sleep;

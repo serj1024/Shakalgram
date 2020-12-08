@@ -1,4 +1,4 @@
-package com.ShakalStudio.shakalgram;
+package com.ShakalStudio.shakalgram.MVP;
 
 import android.os.Bundle;
 
@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.ShakalStudio.shakalgram.R;
 
 public class MainActivity extends AppCompatActivity implements MainActView{
     private RecyclerView _imagesRecyclerView;

@@ -1,4 +1,4 @@
-package com.ShakalStudio.shakalgram;
+package com.ShakalStudio.shakalgram.MVP;
 
 import android.content.Context;
 

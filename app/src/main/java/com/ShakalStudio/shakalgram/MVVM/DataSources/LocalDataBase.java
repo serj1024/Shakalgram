@@ -1,14 +1,14 @@
-package com.ShakalStudio.shakalgram;
+package com.ShakalStudio.shakalgram.MVVM.DataSources;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public class LikeHandler {
-    private String _tableName = "image";
+public class LocalDataBase {
+    private String _tableName = "post";
     private SQLiteDatabase _dataBase;
 
-    public LikeHandler(Context context)
+    public LocalDataBase(Context context)
     {
         _dataBase = context.openOrCreateDatabase("app.db", context.MODE_PRIVATE, null);
         CraeteTable();

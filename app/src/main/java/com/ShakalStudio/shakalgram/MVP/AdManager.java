@@ -1,4 +1,4 @@
-package com.ShakalStudio.shakalgram;
+package com.ShakalStudio.shakalgram.MVP;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.widget.Toast;
 
 public class AdManager {
+    //можно вынести в R.string.ad_image_url ...
     public String AdImageURL = "https://i.ytimg.com/vi/8B8DV_k5IR0/maxresdefault.jpg";
     public String DownloadLink = "https://github.com/serj1024/Shakalgram";
     private String _packageNameAdApp = "com.igd.appcats";
@@ -29,6 +30,7 @@ public class AdManager {
             context.startActivity(intent);
         }
         catch(Exception e){
+            //можно вынести в событие и подписаться на него в презентере и дергать методы вьюхи
             Toast.makeText(context, "No application can handle this request."
                     + " Please install a " + getName(_packageNameAdApp),  Toast.LENGTH_LONG).show();
             e.printStackTrace();

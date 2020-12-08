@@ -1,4 +1,4 @@
-package com.ShakalStudio.shakalgram;
+package com.ShakalStudio.shakalgram.MVP;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.ShakalStudio.shakalgram.R;
 import com.squareup.picasso.Picasso;
 
 public class FullScreenActivity extends AppCompatActivity implements FullScreenActView {

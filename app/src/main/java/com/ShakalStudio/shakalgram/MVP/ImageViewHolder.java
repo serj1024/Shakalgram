@@ -1,10 +1,11 @@
-package com.ShakalStudio.shakalgram;
+package com.ShakalStudio.shakalgram.MVP;
 
 import android.view.View;
 import android.widget.ImageView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ShakalStudio.shakalgram.R;
 import com.squareup.picasso.Picasso;
 
 public class ImageViewHolder extends RecyclerView.ViewHolder implements ImageHolderView{
