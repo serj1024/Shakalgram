@@ -29,7 +29,7 @@ public class ImageViewHolder extends RecyclerView.ViewHolder implements ImageHol
             @Override
             public void onClick(View v) {
                 int index = getAdapterPosition();
-                mainViewModel.setLike(index);
+                mainViewModel.onLikeButtonClicked(index);
                 setLike(mainViewModel.getLike(index));
             }
         });
@@ -42,9 +42,15 @@ public class ImageViewHolder extends RecyclerView.ViewHolder implements ImageHol
 
     @Override
     public void setLike(boolean filled) {
+        _likeImageView.setVisibility(View.VISIBLE);
         if (filled)
             Picasso.get().load(R.drawable.filled_heart).into(_likeImageView);
         else
             Picasso.get().load(R.drawable.unfilled_heart).into(_likeImageView);
+    }
+
+    @Override
+    public void disableLike() {
+        _likeImageView.setVisibility(View.GONE);
     }
 }

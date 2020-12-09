@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.ShakalStudio.shakalgram.MVVM.Models.PostType;
 import com.ShakalStudio.shakalgram.MVVM.Views.ImageHolderView;
 import com.ShakalStudio.shakalgram.MVVM.Models.Post;
 import com.ShakalStudio.shakalgram.MVVM.Repositories.PostRepository;
@@ -32,7 +33,15 @@ public class MainViewModel extends ViewModel {
     public void onBindImageViewAtPosition(int position, ImageHolderView imageHolderView) {
         String imageURL = postRepository.getPost(position).getImageURL();
         imageHolderView.setMainImage(imageURL);
-        imageHolderView.setLike(postRepository.getPost(position).getLike());
+
+        switch (getCurrentPostType(position)) {
+            case AD:
+                imageHolderView.disableLike();
+                break;
+            case DEFAULT:
+                imageHolderView.setLike(postRepository.getPost(position).getLike());
+                break;
+        }
     }
 
     public LiveData<ArrayList<Post>> getPostsLiveData() {
@@ -47,7 +56,7 @@ public class MainViewModel extends ViewModel {
         OnMainImageClicked.setValue(indexImage);
     }
 
-    public void setLike(int index) {
+    public void onLikeButtonClicked(int index) {
         postRepository.setLike(index);
     }
 
@@ -57,5 +66,9 @@ public class MainViewModel extends ViewModel {
 
     public String getImageURL(int index){
         return postRepository.getPost(index).getImageURL();
+    }
+
+    public PostType getCurrentPostType(int indexMainImage){
+        return postRepository.getPost(indexMainImage).getType();
     }
 }

@@ -36,7 +36,7 @@ public class FullScreenActivity extends AppCompatActivity {
         likeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainViewModel.setLike(selectedImagePosition);
+                mainViewModel.onLikeButtonClicked(selectedImagePosition);
                 setLike(mainViewModel.getLike(selectedImagePosition));
             }
         });

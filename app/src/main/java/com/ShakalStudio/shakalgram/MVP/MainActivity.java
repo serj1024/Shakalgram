@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements MainActView{
         _mainPresenter = new MainPresenter(this,
                 ServiceLocator.getInstance().getImageParser(),
                 ServiceLocator.getInstance().getLikeHandler(this.getApplicationContext()),
-                new AdManager());
+                new AdManager(this.getApplicationContext()));
 
         _swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         _imagesRecyclerView = findViewById(R.id.recyclerView);

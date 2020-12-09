@@ -6,15 +6,21 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
 
+import com.ShakalStudio.shakalgram.R;
+
 public class AdManager {
-    //можно вынести в R.string.ad_image_url ...
-    public String AdImageURL = "https://i.ytimg.com/vi/8B8DV_k5IR0/maxresdefault.jpg";
-    public String DownloadLink = "https://github.com/serj1024/Shakalgram";
-    private String _packageNameAdApp = "com.igd.appcats";
+    public String AdImageURL;
+    public String DownloadLink;
+    private String packageNameAdApp;
+
+    public AdManager(Context context) {
+        AdImageURL = context.getString(R.string.ad_image_url);
+        DownloadLink = context.getString(R.string.ad_download_link);
+        packageNameAdApp = context.getString(R.string.package_name_ad_app);
+    }
 
     public void showAdDownloadLink(Context context) {
         try {
-            new ActivityNotFoundException();
             Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(DownloadLink));
             context.startActivity(myIntent);
         } catch (ActivityNotFoundException e) {
@@ -25,19 +31,19 @@ public class AdManager {
     }
 
     public void showAdApp(Context context) {
-        Intent intent = context.getPackageManager().getLaunchIntentForPackage(_packageNameAdApp);
+        Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageNameAdApp);
         try{
             context.startActivity(intent);
         }
         catch(Exception e){
             //можно вынести в событие и подписаться на него в презентере и дергать методы вьюхи
             Toast.makeText(context, "No application can handle this request."
-                    + " Please install a " + getName(_packageNameAdApp),  Toast.LENGTH_LONG).show();
+                    + " Please install a " + getAppName(packageNameAdApp),  Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }
 
-    private String getName(String packageName) {
+    private String getAppName(String packageName) {
         String[] splitPackageName = packageName.split("\\.");
         String nameApp = splitPackageName[splitPackageName.length-1];
         String capitalizedName = nameApp.substring(0, 1).toUpperCase() + nameApp.substring(1).toLowerCase();

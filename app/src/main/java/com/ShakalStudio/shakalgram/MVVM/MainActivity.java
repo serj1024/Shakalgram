@@ -71,16 +71,47 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel.OnMainImageClicked.observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(Integer adapterPosition) {
-            Intent intent = new Intent(context, FullScreenActivity.class);
-            intent.putExtra("index", adapterPosition);
-            setResult(RESULT_OK, intent);
-            try{
-                startActivity(intent);
+                switch (mainViewModel.getCurrentPostType(adapterPosition)) {
+                    case AD:
+                        showAdApp(context);
+                        break;
+                    case DEFAULT:
+                        showFullScreenActivity(adapterPosition);
+                        break;
+                }
             }
-            catch(Exception e){
-                Toast.makeText(context, "GG WP",  Toast.LENGTH_LONG).show();
-                e.printStackTrace();
+
+            private void showAdApp(Context context) {
+                String packageNameAdApp = getString(R.string.package_name_ad_app);
+                Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageNameAdApp);
+                try{
+                    context.startActivity(intent);
+                }
+                catch(Exception e){
+                    Toast.makeText(context, "No application can handle this request."
+                            + " Please install a " + getAppName(packageNameAdApp),  Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
             }
+
+            private String getAppName(String packageName) {
+                String[] splitPackageName = packageName.split("\\.");
+                String nameApp = splitPackageName[splitPackageName.length-1];
+                String capitalizedName = nameApp.substring(0, 1).toUpperCase() + nameApp.substring(1).toLowerCase();
+                return capitalizedName;
+            }
+
+            private void showFullScreenActivity(Integer adapterPosition) {
+                Intent intent = new Intent(context, FullScreenActivity.class);
+                intent.putExtra("index", adapterPosition);
+                setResult(RESULT_OK, intent);
+                try{
+                    startActivity(intent);
+                }
+                catch(Exception e){
+                    Toast.makeText(context, "GG WP",  Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
             }
         });
 
