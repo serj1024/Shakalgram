@@ -32,34 +32,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imagesRecyclerView = findViewById(R.id.recyclerView);
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-
-        mainViewModel = new ViewModelProvider(this, new MainViewModelFactory())
-                .get(MainViewModel.class);
-        //желательно передать контекст через фабрику (хз как)
-        context = getBaseContext();
-        mainViewModel.setContext(context);
-
-        imagesRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-        imagesRecyclerView.setAdapter(new ImageAdapter(mainViewModel));
-        imagesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) imagesRecyclerView.getLayoutManager();
-                int lastImagePosition = mainViewModel.getPostsCount()-1;
-                if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == lastImagePosition) {
-                    mainViewModel.downloadImagesAsync();
-                    swipeRefreshLayout.setRefreshing(true);
-                }
-            }
-        });
+        initSwipeRefreshLayout();
+        initMainViewModel();
+        initImageRecyclerView();
 
         mainViewModel.getPostsLiveData().observe(this, new Observer<ArrayList<Post>>() {
             @Override
@@ -122,6 +97,41 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         updateData();
+    }
+
+    private void initSwipeRefreshLayout() {
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+    }
+
+    private void initImageRecyclerView() {
+        imagesRecyclerView = findViewById(R.id.recyclerView);
+        imagesRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        imagesRecyclerView.setAdapter(new ImageAdapter(mainViewModel));
+        imagesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) imagesRecyclerView.getLayoutManager();
+                int lastImagePosition = mainViewModel.getPostsCount()-1;
+                if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == lastImagePosition) {
+                    mainViewModel.downloadImagesAsync();
+                    swipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
+    }
+
+    private void initMainViewModel() {
+        mainViewModel = new ViewModelProvider(this, new MainViewModelFactory())
+                .get(MainViewModel.class);
+        //желательно передать контекст через фабрику (хз как)
+        context = getBaseContext();
+        mainViewModel.setContext(context);
     }
 
     private void updateData() {
