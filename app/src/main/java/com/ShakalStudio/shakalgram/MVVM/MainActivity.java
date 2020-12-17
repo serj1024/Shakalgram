@@ -2,7 +2,9 @@ package com.ShakalStudio.shakalgram.MVVM;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -90,7 +92,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mainViewModel.downloadImagesAsync();
+        if(checkInternetConnected()){
+            mainViewModel.downloadImagesAsync();
+        }
+        else {
+            ShowToastErrorInternetConnected();
+        }
     }
 
     @Override
@@ -119,8 +126,14 @@ public class MainActivity extends AppCompatActivity {
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) imagesRecyclerView.getLayoutManager();
                 int lastImagePosition = mainViewModel.getPostsCount()-1;
                 if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == lastImagePosition) {
-                    mainViewModel.downloadImagesAsync();
-                    swipeRefreshLayout.setRefreshing(true);
+                    if(checkInternetConnected()) {
+                        mainViewModel.downloadImagesAsync();
+                        swipeRefreshLayout.setRefreshing(true);
+                    }
+                    else {
+                        ShowToastErrorInternetConnected();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
                 }
             }
         });
@@ -132,6 +145,23 @@ public class MainActivity extends AppCompatActivity {
         //желательно передать контекст через фабрику (хз как)
         context = getBaseContext();
         mainViewModel.setContext(context);
+    }
+
+    public boolean checkInternetConnected() {
+        try {
+            android.net.ConnectivityManager e = (android.net.ConnectivityManager)getSystemService(
+                    Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = e.getActiveNetworkInfo();
+            return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        } catch (Exception e) {
+            Log.w("TAG", e.toString());
+        }
+        return false;
+    }
+
+    private void ShowToastErrorInternetConnected() {
+        Toast toast = Toast.makeText(this, "Включи интернет, 21 век на дворе!", Toast.LENGTH_LONG);
+        toast.show();
     }
 
     private void updateData() {
