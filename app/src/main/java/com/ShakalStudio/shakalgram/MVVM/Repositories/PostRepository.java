@@ -11,7 +11,6 @@ import com.ShakalStudio.shakalgram.MVVM.DataSources.ImageDataSource;
 import com.ShakalStudio.shakalgram.MVVM.DataSources.LocalDataBase;
 import com.ShakalStudio.shakalgram.MVVM.Models.Post;
 import com.ShakalStudio.shakalgram.MVVM.Models.PostType;
-import com.ShakalStudio.shakalgram.R;
 
 import java.util.ArrayList;
 
@@ -20,52 +19,58 @@ public class PostRepository {
 
     private ImageDataSource imageDataSource;
     private LocalDataBase localDataBase;
+    private int countAdPost = 0;
 
     public String adImageURL = "https://i.ytimg.com/vi/8B8DV_k5IR0/maxresdefault.jpg";
 
     private ArrayList<Post> posts = new ArrayList<>();
     private MutableLiveData<ArrayList<Post>> postsLiveData = new MutableLiveData<>();
+    private AsyncTask<Void, Void, Void> downloadAsyncTask;
 
-    public PostRepository(ImageDataSource imageDataSource) {
+    public PostRepository(ImageDataSource imageDataSource, Context context) {
         this.imageDataSource = imageDataSource;
+        localDataBase = new LocalDataBase(context);
     }
 
-    public static PostRepository getInstance(ImageDataSource imageDataSource) {
+    public static PostRepository getInstance(ImageDataSource imageDataSource, Context context) {
         if (instance == null) {
-            instance = new PostRepository(imageDataSource);
+            instance = new PostRepository(imageDataSource, context);
         }
         return instance;
     }
 
     @SuppressLint("StaticFieldLeak")
     public void downloadNewPostImagesAsync() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                imageDataSource.downloadNewPageImages();
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-
-                posts.addAll(getDownloadedPosts());
-                posts.add(new Post(adImageURL,false, PostType.AD));
-                postsLiveData.setValue(posts);
-            }
-
-            private ArrayList<Post> getDownloadedPosts() {
-                ArrayList<Post> downloadedPosts = new ArrayList<>();
-                ArrayList<String> downloadedImagesURL = imageDataSource.getDownloadedImagesURL();
-
-                for (int i = 0; i < downloadedImagesURL.size(); i++) {
-                    String imageURL = downloadedImagesURL.get(i);
-                    downloadedPosts.add(new Post(imageURL, localDataBase.findLikeToURL(imageURL), PostType.DEFAULT));
+        if (downloadAsyncTask == null || downloadAsyncTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
+            downloadAsyncTask = new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    imageDataSource.downloadNewPageImages();
+                    return null;
                 }
-                return downloadedPosts;
-            }
-        }.execute();
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+
+                    posts.addAll(getDownloadedPosts());
+                    posts.add(new Post(adImageURL, false, PostType.AD));
+                    ++countAdPost;
+                    postsLiveData.setValue(posts);
+                }
+
+                private ArrayList<Post> getDownloadedPosts() {
+                    ArrayList<Post> downloadedPosts = new ArrayList<>();
+                    ArrayList<String> downloadedImagesURL = imageDataSource.getDownloadedImagesURL();
+
+                    for (int i = 0; i < downloadedImagesURL.size(); i++) {
+                        String imageURL = downloadedImagesURL.get(i);
+                        downloadedPosts.add(new Post(imageURL, localDataBase.findLikeToURL(imageURL), PostType.DEFAULT));
+                    }
+                    return downloadedPosts;
+                }
+            }.execute();
+        }
     }
 
     public LiveData<ArrayList<Post>> getPostsLiveData() {
@@ -76,10 +81,6 @@ public class PostRepository {
         return posts.size();
     }
 
-    public void initLocalDataBase(Context baseContext) {
-        localDataBase = new LocalDataBase(baseContext);
-    }
-
     public Post getPost(int position) {
         return posts.get(position);
     }
@@ -87,5 +88,13 @@ public class PostRepository {
     public void setLike(int imageIndex) {
         String imageURL = getPost(imageIndex).getImageURL();
         getPost(imageIndex).setLike(localDataBase.trySetLike(imageURL));
+    }
+
+    public int getCountAdPost() {
+        return countAdPost;
+    }
+
+    public int getCountImageInPage() {
+        return imageDataSource.getCountItemInPage();
     }
 }

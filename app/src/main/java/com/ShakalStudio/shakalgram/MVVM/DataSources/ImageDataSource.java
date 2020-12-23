@@ -5,5 +5,6 @@ import java.util.ArrayList;
 public interface ImageDataSource {
     ArrayList<String> getDownloadedImagesURL();
     void downloadNewPageImages();
+    Integer getStartedPage();
+    int getCountItemInPage();
 }
-

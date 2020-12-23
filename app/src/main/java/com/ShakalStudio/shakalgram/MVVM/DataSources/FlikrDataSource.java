@@ -14,38 +14,52 @@ import java.util.ArrayList;
 import static com.flickr4java.flickr.photos.SearchParameters.RELEVANCE;
 
 public class FlikrDataSource implements ImageDataSource {
-    private String _apiKey = "6a57d554703bfffb264f029d63ab81c1";
-    private String _sharedSecret = "b35d3ec4118c4eea";
-    private String _searchTile = "car";
-    private Integer _itemInPage = 15;
-    private Integer _page = 1;
-    private ArrayList<String> _downloadImagesURL = new ArrayList();
-    Flickr flickr;
-    public FlikrDataSource() {
-        flickr = new Flickr(_apiKey, _sharedSecret, new REST());
+    private String apiKey = "6a57d554703bfffb264f029d63ab81c1";
+    private String sharedSecret = "b35d3ec4118c4eea";
+    private String searchTile = "car";
+    private Integer itemInPage = 15;
+    private Integer page = 1;
+    private ArrayList<String> downloadImagesURL = new ArrayList();
+    private Flickr flickr;
+    private Integer startedPage;
+
+    public FlikrDataSource(Integer page) {
+        this.page = page;
+        startedPage = page;
+        flickr = new Flickr(apiKey, sharedSecret, new REST());
     }
 
     @Override
     public ArrayList<String> getDownloadedImagesURL() {
-        return _downloadImagesURL;
+        return downloadImagesURL;
     }
 
     @Override
     public void downloadNewPageImages() {
         try {
-            _downloadImagesURL.clear();
+            downloadImagesURL.clear();
             PhotosInterface photos = flickr.getPhotosInterface();
             SearchParameters params = new SearchParameters();
             params.setMedia("photos");
-            params.setText(_searchTile);
+            params.setText(searchTile);
             params.setSort(RELEVANCE);
             params.setExtras(Extras.ALL_EXTRAS);
-            PhotoList<Photo> resultsPhoto = photos.search(params, _itemInPage, ++_page);
+            PhotoList<Photo> resultsPhoto = photos.search(params, itemInPage, ++page);
             for (Photo p: resultsPhoto){
-                _downloadImagesURL.add(p.getMediumUrl());
+                downloadImagesURL.add(p.getMediumUrl());
             }
         } catch (FlickrException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Integer getStartedPage() {
+        return startedPage;
+    }
+
+    @Override
+    public int getCountItemInPage() {
+        return itemInPage;
     }
 }

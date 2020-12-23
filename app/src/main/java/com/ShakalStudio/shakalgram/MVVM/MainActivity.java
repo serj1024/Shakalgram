@@ -17,7 +17,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ShakalStudio.shakalgram.MVVM.Models.Post;
 import com.ShakalStudio.shakalgram.MVVM.ViewModels.MainViewModel;
-import com.ShakalStudio.shakalgram.MVVM.ViewModels.MainViewModelFactory;
 import com.ShakalStudio.shakalgram.MVVM.Views.FullScreenActivity;
 import com.ShakalStudio.shakalgram.R;
 
@@ -27,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private MainViewModel mainViewModel;
     private RecyclerView imagesRecyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private Context context;
+    private LinearLayoutManager linearLayoutManager;
+    private boolean isFirstUpdateData = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel.getPostsLiveData().observe(this, new Observer<ArrayList<Post>>() {
             @Override
             public void onChanged(ArrayList<Post> posts) {
+                if(isFirstUpdateData){
+                    linearLayoutManager.scrollToPosition(mainViewModel.getCurrentImageIndexInPag());
+                    isFirstUpdateData = false;
+                }
                 updateData();
             }
         });
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(Integer adapterPosition) {
                 switch (mainViewModel.getCurrentPostType(adapterPosition)) {
                     case AD:
-                        showAdApp(context);
+                        showAdApp(getBaseContext());
                         break;
                     case DEFAULT:
                         showFullScreenActivity(adapterPosition);
@@ -79,14 +83,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
             private void showFullScreenActivity(Integer adapterPosition) {
-                Intent intent = new Intent(context, FullScreenActivity.class);
+                Intent intent = new Intent(getBaseContext(), FullScreenActivity.class);
                 intent.putExtra("index", adapterPosition);
                 setResult(RESULT_OK, intent);
                 try{
                     startActivity(intent);
                 }
                 catch(Exception e){
-                    Toast.makeText(context, "GG WP",  Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "GG WP",  Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
             }
@@ -106,14 +110,22 @@ public class MainActivity extends AppCompatActivity {
         updateData();
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        mainViewModel.saveCurrentStateInfo(linearLayoutManager.findFirstCompletelyVisibleItemPosition());
+    }
+
     private void initSwipeRefreshLayout() {
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
     }
 
     private void initImageRecyclerView() {
         imagesRecyclerView = findViewById(R.id.recyclerView);
-        imagesRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        linearLayoutManager = new LinearLayoutManager(getBaseContext());
+        imagesRecyclerView.setLayoutManager(linearLayoutManager);
         imagesRecyclerView.setAdapter(new ImageAdapter(mainViewModel));
+        imagesRecyclerView.scrollToPosition(mainViewModel.getCurrentImageIndexInPag());
         imagesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -123,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) imagesRecyclerView.getLayoutManager();
                 int lastImagePosition = mainViewModel.getPostsCount()-1;
                 if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == lastImagePosition) {
                     if(checkInternetConnected()) {
@@ -140,11 +151,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initMainViewModel() {
-        mainViewModel = new ViewModelProvider(this, new MainViewModelFactory())
-                .get(MainViewModel.class);
-        //желательно передать контекст через фабрику (хз как)
-        context = getBaseContext();
-        mainViewModel.setContext(context);
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
     }
 
     public boolean checkInternetConnected() {

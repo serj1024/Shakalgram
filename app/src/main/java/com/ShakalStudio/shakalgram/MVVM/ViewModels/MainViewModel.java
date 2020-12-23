@@ -1,11 +1,18 @@
 package com.ShakalStudio.shakalgram.MVVM.ViewModels;
 
+import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.ShakalStudio.shakalgram.MVVM.DataSources.FlikrDataSource;
+import com.ShakalStudio.shakalgram.MVVM.DataSources.ImageDataSource;
 import com.ShakalStudio.shakalgram.MVVM.Models.PostType;
 import com.ShakalStudio.shakalgram.MVVM.Views.ImageHolderView;
 import com.ShakalStudio.shakalgram.MVVM.Models.Post;
@@ -13,14 +20,23 @@ import com.ShakalStudio.shakalgram.MVVM.Repositories.PostRepository;
 
 import java.util.ArrayList;
 
-public class MainViewModel extends ViewModel {
+public class MainViewModel extends AndroidViewModel {
 
     public MutableLiveData<Integer> OnMainImageClicked = new MutableLiveData<>();
-    public MainViewModel(PostRepository postRepository) {
-        this.postRepository = postRepository;
-    }
 
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
     private PostRepository postRepository;
+    private ImageDataSource imageDataSource;
+
+    public MainViewModel(@NonNull Application application) {
+        super(application);
+        sharedPreferences = application.getSharedPreferences("preference_key", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        imageDataSource = new FlikrDataSource(getSavedPageIndex());
+        this.postRepository = PostRepository.getInstance(imageDataSource, application.getBaseContext());
+    }
 
     public void downloadImagesAsync() {
         postRepository.downloadNewPostImagesAsync();
@@ -48,10 +64,6 @@ public class MainViewModel extends ViewModel {
         return postRepository.getPostsLiveData();
     }
 
-    public void setContext(Context baseContext) {
-        postRepository.initLocalDataBase(baseContext);
-    }
-
     public void onMainImageClicked(Integer indexImage) {
         OnMainImageClicked.setValue(indexImage);
     }
@@ -70,5 +82,31 @@ public class MainViewModel extends ViewModel {
 
     public PostType getCurrentPostType(int indexMainImage){
         return postRepository.getPost(indexMainImage).getType();
+    }
+
+    private int getSavedPageIndex(){
+        return sharedPreferences.getInt("CurrentPageIndex", 1);
+    }
+
+    public int getCurrentImageIndexInPag(){
+        return sharedPreferences.getInt("CurrentImageIndexInPage", 0);
+    }
+
+    public int getStartedPage() {
+        return imageDataSource.getStartedPage();
+    }
+
+    public void saveCurrentStateInfo(int firstCompletelyVisibleItemPosition) {
+        int countLoadedPage = firstCompletelyVisibleItemPosition / (postRepository.getCountImageInPage()+1);
+        int currentPageIndex = getStartedPage() + countLoadedPage;
+        int currentImageIndexInPage = firstCompletelyVisibleItemPosition - countLoadedPage*(postRepository.getCountImageInPage()+1);
+
+        saveIntValue("CurrentPageIndex", currentPageIndex);
+        saveIntValue("CurrentImageIndexInPage", currentImageIndexInPage);
+    }
+
+    private void saveIntValue(String key, int value){
+        editor.putInt(key, value);
+        editor.apply();
     }
 }

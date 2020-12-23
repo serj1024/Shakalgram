@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.ShakalStudio.shakalgram.MVVM.ViewModels.MainViewModel;
-import com.ShakalStudio.shakalgram.MVVM.ViewModels.MainViewModelFactory;
 import com.ShakalStudio.shakalgram.R;
 import com.squareup.picasso.Picasso;
 
@@ -23,8 +22,7 @@ public class FullScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_full_screen);
         likeImageView = findViewById(R.id.likeImageView);
 
-        mainViewModel = new ViewModelProvider(this, new MainViewModelFactory())
-                .get(MainViewModel.class);
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         Bundle arguments = getIntent().getExtras();
         if (arguments != null)
